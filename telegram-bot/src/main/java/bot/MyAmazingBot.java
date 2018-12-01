@@ -3,7 +3,6 @@ package bot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.undeground.Event;
@@ -63,11 +62,11 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                         resultText += registerQueue(chatId, splitMessageText[1]);
                         break;
                     case "enterQueue":
-                        resultText += enterQueue(update.getMessage().getChatId().toString());
+                        resultText += enterQueue(chatId, splitMessageText[1], splitMessageText[2]);
                         break;
-                    case "enterEvent":
-                        resultText += "You enter in HackDay event";
-                        break;
+//                    case "enterEvent":
+//                        resultText += "You enter in HackDay event";
+//                        break;
                 }
 
                 outMessage.setText(resultText);
@@ -80,7 +79,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         }
     }
 
-    private String enterQueue(String chatIdUser) {
+    private String enterQueue(String chatId, String eventName, String queueName) {
         queue.getParticipatingUsers().add(chatIdUser);
         System.out.println(chatIdUser);
         return "You was added in Coffee queue";
@@ -103,13 +102,14 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         Event event = findEvent(chatId);
 
         queue.setQueueName(queueName);
-//        queue.setEventId(event.getEventId());
+        queue.setEventId(event.getEventName());
 
+        manager.getQueueStorage().createQueue(queue);
 
-        return "Queue coffee was create";
+        return "Queue " + queueName + " was create";
     }
 
-    private Event findEvent(String chatId){
+    private Event findEvent(String chatId) {
         Event event = null;
         for (Event e : manager.getEventStorage().getAllEvents()) {
             if (chatId.equals(e.getChatId())) {
