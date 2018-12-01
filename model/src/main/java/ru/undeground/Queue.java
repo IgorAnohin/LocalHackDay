@@ -36,4 +36,8 @@ public class Queue {
 
   @Wither
   String geoLocation;
+
+  public Queue() {
+
+  }
 }
