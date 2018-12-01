@@ -34,7 +34,10 @@ public class RuntimeEventStorage implements EventStorage {
 
   @Override
   public List<Event> getEventsByLocation(String location) {
-    return null; // todo
+    return events.values()
+        .stream()
+        .filter(event -> event.getGeoLocations().contains(location))
+        .collect(Collectors.toList());
   }
 
   @Override
