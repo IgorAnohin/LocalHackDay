@@ -11,9 +11,7 @@ import ru.undeground.Queue;
 import ru.undeground.storage.RuntimeStorageManager;
 
 public class MyAmazingBot extends TelegramLongPollingBot {
-    private Event event;
     private RuntimeStorageManager manager = new RuntimeStorageManager();
-    private Queue queue;
 
     {
         Thread thread = new Thread(new Runnable() {
@@ -49,7 +47,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageTextWithSlash = update.getMessage().getText();
 
-            String chatID = update.getMessage().getChatId().toString();
+            String chatId = update.getMessage().getChatId().toString();
             if (messageTextWithSlash.charAt(0) == '/') {
                 SendMessage outMessage = new SendMessage().setChatId(update.getMessage().getChatId());
 
@@ -59,10 +57,10 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                 String resultText = "";
                 switch (splitMessageText[0]) {
                     case "createEvent":
-                        resultText += registerEvent(chatID, splitMessageText[1]);
+                        resultText += registerEvent(chatId, splitMessageText[1]);
                         break;
                     case "createQueue":
-                        resultText += registerQueue(outMessage);
+                        resultText += registerQueue(chatId, splitMessageText[1]);
                         break;
                     case "enterQueue":
                         resultText += enterQueue(update.getMessage().getChatId().toString());
@@ -99,22 +97,27 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         return "Added event " + event.getEventName();
     }
 
-    private String registerQueue(SendMessage message) {
+    private String registerQueue(String chatId, String queueName) {
         Queue queue = new Queue();
 
+        Event event = findEvent(chatId);
+
+        queue.setQueueName(queueName);
+//        queue.setEventId(event.getEventId());
+
+
+        return "Queue coffee was create";
+    }
+
+    private Event findEvent(String chatId){
         Event event = null;
         for (Event e : manager.getEventStorage().getAllEvents()) {
-            if (message.getChatId().equals(e.getChatId())) {
+            if (chatId.equals(e.getChatId())) {
                 event = e;
                 break;
             }
         }
-
-        queue.setQueueName("Coffee");
-
-        this.queue = queue;
-
-        return "Queue coffee was create";
+        return event;
     }
 
     @Override
