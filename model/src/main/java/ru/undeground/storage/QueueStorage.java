@@ -3,8 +3,6 @@ package ru.undeground.storage;
 import java.util.List;
 import java.util.UUID;
 import ru.undeground.Queue;
-import ru.undeground.QueueAddStatus;
-import ru.undeground.QueueApproveStatus;
 
 public interface QueueStorage {
 
