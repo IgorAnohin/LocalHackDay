@@ -50,9 +50,20 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                 .collect(Collectors.joining());
             break;
           case "getQueues":
-            resultText += manager
+            String eventName = splitMessageText[1];
+            List<Queue> eventQueues = manager
                 .getQueueStorage()
-                .getEventQueues(splitMessageText[1]);
+                .getEventQueues(eventName);
+
+            if(eventQueues.isEmpty()) {
+              resultText += "No queues were found in the event \"" + eventName + "\"";
+            } else {
+              resultText += "Queues in the event \"" + eventName + "\":\n";
+              for(Queue queue: eventQueues) {
+                resultText += (queue.getQueueName() + ": " + queue.getParticipatingUsers().size() + " people inside\n");
+              }
+              resultText += "==========";
+            }
             break;
           case "findLocations":
             List<Location> locations = LocationAPI.getLocations(splitMessageText[1]);
