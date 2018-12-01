@@ -24,12 +24,14 @@ public class RuntimeEventStorage implements EventStorage {
 
   @Override
   public void createEvent(Event event) {
-    if(events.containsKey(event.getEventId())) {
+    if (events.containsKey(event.getEventId())) {
       return;
     }
 
-    if(events.values().stream().anyMatch(storageEvent -> storageEvent.getChatId().equals(event.getChatId())))
-    events.put(event.getEventId(), event);
+    if (events.values().stream()
+        .anyMatch(storageEvent -> !storageEvent.getChatId().equals(event.getChatId()))) {
+      events.put(event.getEventId(), event);
+    }
   }
 
   @Override
