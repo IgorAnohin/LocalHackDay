@@ -25,13 +25,4 @@
         <module>model</module>
     </modules>
 
-
-    <dependencies>
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>3.5</version>
-        </dependency>
-    </dependencies>
-
 </project>

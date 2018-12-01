@@ -11,5 +11,11 @@
 
   <artifactId>telegram-bot</artifactId>
 
-
+  <dependencies>
+    <dependency>
+      <groupId>org.telegram</groupId>
+      <artifactId>telegrambots</artifactId>
+      <version>LATEST</version>
+    </dependency>
+  </dependencies>
 </project>

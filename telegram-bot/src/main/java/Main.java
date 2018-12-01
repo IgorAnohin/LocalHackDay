@@ -1,15 +1,23 @@
+import bot.MyAmazingBot;
 import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 public class Main {
     public static void main(String[] args) {
+        // Initialize Api Context
         ApiContextInitializer.init();
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+
+        // Instantiate Telegram Bots API
+        TelegramBotsApi botsApi = new TelegramBotsApi();
+
+        // Register our bot
         try {
-            telegramBotsApi.registerBot(new Bot());
-        } catch (TelegramApiRequestException e) {
+            botsApi.registerBot(new MyAmazingBot());
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+        System.out.println("Ура");
     }
 }
