@@ -45,7 +45,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
               for (int i = 0; i < locations.size() && i < 5; ++i) {
                 Location location = locations.get(i);
                 resultText += (i + ": " + location.getName() + "\n" + location.getViewLink() + "\n"
-                    + "\n==========");
+                    + "\n==========\n");
               }
 
               resultText += "Please pick some location by typing location index\n";
@@ -95,7 +95,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
               for (int i = 0; i < locations.size(); ++i) {
                 Location location = locations.get(i);
                 resultText += (i + ": " + location.getName() + "\n" + location.getViewLink() + "\n"
-                    + "\n==========");
+                    + "\n==========\n");
               }
 
               resultText += "Please choose some location by typing location index\n";
