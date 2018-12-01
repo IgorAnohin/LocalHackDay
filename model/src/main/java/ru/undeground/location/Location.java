@@ -1,4 +1,4 @@
-package ru.undeground;
+package ru.undeground.location;
 
 public class Location {
 
