@@ -5,8 +5,13 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.undeground.Event;
+import ru.undeground.Queue;
+import ru.undeground.storage.RuntimeEventStorage;
 
 public class MyAmazingBot extends TelegramLongPollingBot {
+    private RuntimeEventStorage eventStorage = new RuntimeEventStorage();
+
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -22,10 +27,10 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                                 "Choose queue [name]\n";
                         break;
                     case "createEvent":
-                        resultText += registerEvent(messagesText.split(" ")[1], messagesText.split(" ")[2]);
+                        resultText += registerEvent(message);
                         break;
                     case "createQueue":
-                        resultText += registerQueue(messagesText.split(" ")[1], messagesText.split(" ")[2]);
+                        resultText += registerQueue(message);
                         break;
                     case "text":
                         resultText += update.getMessage().getGroupchatCreated();
@@ -43,13 +48,39 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         }
     }
 
-    private String registerEvent(String nameEvent, String descriptionEvent) {
+    private String registerEvent(SendMessage message) {
         //todo
+        Event event = new Event();
+
+        for (Event e : eventStorage.getAllEvents()) {
+            if(e.getChatId().equals(message.getChatId())){
+                return "You have already created an event";
+            }
+        }
+
+        event.setChatId(message.getChatId());
+        event.setEventName(message.getText().substring(1).split(" ")[1]);
+        event.setEventDescriptions(message.getText().substring(1).split(" ")[2]);
+
+        eventStorage.createEvent(event);
         return "newEvent";
     }
 
-    private String registerQueue(String s, String s1) {
+    private String registerQueue(SendMessage message) {
         //todo
+        Queue queue = new Queue();
+
+        Event event = null;
+        for (Event e : eventStorage.getAllEvents()) {
+            if (message.getChatId().equals(e.getChatId())) {
+                event = e;
+                break;
+            }
+        }
+
+        queue.setEventId(event.getEventId());
+        queue.setQueueName(message.getText().substring(1).split(" ")[1]);
+
         return "newQueue";
     }
 
