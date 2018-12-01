@@ -49,8 +49,10 @@ public class MyAmazingBot extends TelegramLongPollingBot {
 
     private String enterQueue(String chatId, String eventName, String queueName) {
         Queue queue = findQueue(eventName, queueName);
+
         queue.getParticipatingUsers().add(chatId);
-        return "You was added in " + queueName + "queue";
+
+        return "You was added in " + queueName + " queue";
     }
 
     private String registerEvent(String chatId, String eventName) {
