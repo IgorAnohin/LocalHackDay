@@ -39,7 +39,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                 (splitMessageText.length > 2 ? splitMessageText[2] : null));
             break;
           case "createQueue":
-            resultText += registerQueue(splitMessageText[1], splitMessageText[1]);
+            resultText += registerQueue(splitMessageText[1], splitMessageText[2]);
             break;
           case "enterQueue":
             resultText += enterQueue(chatId, splitMessageText[1], splitMessageText[2]);
