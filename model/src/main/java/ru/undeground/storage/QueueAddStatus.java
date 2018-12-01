@@ -6,6 +6,9 @@ public enum QueueAddStatus {
   QUEUE_NOT_EXISTS,
   USER_NOT_EXISTS,
   USER_ALREADY_IN_QUEUE,
-  QUEUE_IS_CLOSED,
-  FAIL;
+  QUEUE_IS_CLOSED;
+
+  public boolean isSuccess() {
+    return this == SUCCESS;
+  }
 }

@@ -5,5 +5,9 @@ public enum QueueApproveStatus {
   QUEUE_NOT_EXISTS,
   USER_NOT_EXISTS,
   USER_IS_NOT_IN_APPROVING,
-  SUCCESS
+  SUCCESS;
+
+  public boolean isSuccess() {
+    return this == SUCCESS;
+  }
 }
