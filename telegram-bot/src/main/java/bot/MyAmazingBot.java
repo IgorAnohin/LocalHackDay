@@ -3,6 +3,7 @@ package bot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.undeground.Event;
@@ -27,7 +28,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                                 "Choose queue [name]\n";
                         break;
                     case "createEvent":
-                        resultText += registerEvent(message);
+                        resultText += registerEvent(update.getMessage());
                         break;
                     case "createQueue":
                         resultText += registerQueue(message);
@@ -48,26 +49,24 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         }
     }
 
-    private String registerEvent(SendMessage message) {
-        //todo
+    private String registerEvent(Message message) {
         Event event = new Event();
 
         for (Event e : eventStorage.getAllEvents()) {
-            if(e.getChatId().equals(message.getChatId())){
+            if(e.getChatId().equals(message.getChatId().toString())){
                 return "You have already created an event";
             }
         }
 
-        event.setChatId(message.getChatId());
+        event.setChatId(message.getChatId().toString());
         event.setEventName(message.getText().substring(1).split(" ")[1]);
         event.setEventDescriptions(message.getText().substring(1).split(" ")[2]);
 
         eventStorage.createEvent(event);
-        return "newEvent";
+        return "newEvent : " + event.getEventId();
     }
 
     private String registerQueue(SendMessage message) {
-        //todo
         Queue queue = new Queue();
 
         Event event = null;
