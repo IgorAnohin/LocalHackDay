@@ -3,16 +3,18 @@ package ru.undeground.storage;
 import java.util.List;
 import java.util.UUID;
 import ru.undeground.Queue;
+import ru.undeground.QueueAddStatus;
+import ru.undeground.QueueApproveStatus;
 
 public interface QueueStorage {
 
-  void createQueue(Queue queue);
+  boolean createQueue(Queue queue);
 
-  void closeQueue(UUID queueId);
+  boolean closeQueue(UUID queueId);
 
   List<Queue> getEventsQueue(UUID eventId);
 
-  void addUserToQueue(UUID queueId, String userId);
+  QueueAddStatus addUserToQueue(UUID queueId, String userId);
 
-  void approveUser(UUID queueId, String userId);
+  QueueApproveStatus approveUser(UUID queueId, String userId);
 }

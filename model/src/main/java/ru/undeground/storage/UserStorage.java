@@ -6,9 +6,9 @@ import ru.undeground.Admin;
 
 public interface UserStorage {
 
-  void createUser(User user);
+  boolean createUser(User user);
 
-  void createAdmin(Admin admin);
+  boolean createAdmin(Admin admin);
 
   Optional<User> getUserById(String userId);
 
