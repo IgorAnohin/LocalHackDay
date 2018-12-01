@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import ru.undeground.Event;
@@ -35,8 +36,16 @@ public class RuntimeEventStorage implements EventStorage {
   }
 
   @Override
-  public Event getEventById(UUID eventId) {
-    return events.get(eventId);
+  public Optional<Event> getEventById(UUID eventId) {
+    return Optional.ofNullable(events.get(eventId));
+  }
+
+  @Override
+  public Optional<Event> getEventByName(String eventName) {
+    return events.values()
+        .stream()
+        .filter(event -> event.getEventName().equals(eventName))
+        .findFirst();
   }
 
   @Override
