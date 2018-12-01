@@ -64,9 +64,6 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                     case "enterQueue":
                         resultText += enterQueue(chatId, splitMessageText[1], splitMessageText[2]);
                         break;
-//                    case "enterEvent":
-//                        resultText += "You enter in HackDay event";
-//                        break;
                 }
 
                 outMessage.setText(resultText);
@@ -80,9 +77,9 @@ public class MyAmazingBot extends TelegramLongPollingBot {
     }
 
     private String enterQueue(String chatId, String eventName, String queueName) {
-        queue.getParticipatingUsers().add(chatIdUser);
-        System.out.println(chatIdUser);
-        return "You was added in Coffee queue";
+        Queue queue = findQueue(eventName, queueName);
+        queue.getParticipatingUsers().add(chatId);
+        return "You was added in " + queueName + "queue";
     }
 
     private String registerEvent(String chatId, String eventName) {
@@ -102,7 +99,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         Event event = findEvent(chatId);
 
         queue.setQueueName(queueName);
-        queue.setEventId(event.getEventName());
+        queue.setEventName(event.getEventName());
 
         manager.getQueueStorage().createQueue(queue);
 
@@ -118,6 +115,17 @@ public class MyAmazingBot extends TelegramLongPollingBot {
             }
         }
         return event;
+    }
+
+    private Queue findQueue(String eventName, String queueName) {
+        Queue queue = null;
+        for (Queue q : manager.getQueueStorage().getEventQueues(eventName)) {
+            if (queueName.equals(q.getQueueName())) {
+                queue = q;
+                break;
+            }
+        }
+        return queue;
     }
 
     @Override
