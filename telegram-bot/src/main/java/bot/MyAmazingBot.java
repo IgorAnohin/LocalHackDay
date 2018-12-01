@@ -7,10 +7,17 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.undeground.Event;
 import ru.undeground.Queue;
+import ru.undeground.location.Location;
+import ru.undeground.location.LocationAPI;
 import ru.undeground.storage.RuntimeStorageManager;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MyAmazingBot extends TelegramLongPollingBot {
     private RuntimeStorageManager manager = new RuntimeStorageManager();
+    private Map<String, List<Location>> userLocationChoice = new HashMap<>();
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -35,6 +42,21 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                     case "enterQueue":
                         resultText += enterQueue(chatId, splitMessageText[1], splitMessageText[2]);
                         break;
+                    case "getEvents":
+                        resultText += manager.getEventStorage().getAllEvents();
+                        break;
+                    case "getQueues":
+                        resultText += manager.getQueueStorage().getEventQueues(splitMessageText[1]);
+                        break;
+                    case "findLocations":
+                        List<Location> locations = LocationAPI.getLocations(splitMessageText[1]);
+                        resultText += locations;
+                        userLocationChoice.put(chatId, locations);
+                        break;
+                    case "getEventsByLocation":
+                        resultText += manager.getEventStorage().getEventsByLocation(userLocationChoice.get(chatId).get(Integer.parseInt(splitMessageText[1])).getViewLink());
+                        break;
+
                 }
 
                 outMessage.setText(resultText);

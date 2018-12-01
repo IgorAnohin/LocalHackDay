@@ -1,5 +1,8 @@
 package ru.undeground.location;
 
+import lombok.Data;
+
+@Data
 public class Location {
 
   String name;
