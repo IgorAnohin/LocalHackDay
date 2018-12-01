@@ -1,9 +1,13 @@
 package ru.undeground.storage;
 
-import ru.undeground.Event;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import ru.undeground.Event;
+import ru.undeground.location.Location;
 
 public class RuntimeEventStorage implements EventStorage {
 
@@ -37,10 +41,18 @@ public class RuntimeEventStorage implements EventStorage {
     }
 
     @Override
-    public List<Event> getEventsByLocation(String location) {
+    public List<Event> getEventsByLocation(String locationLink) {
         return events.values()
                 .stream()
-                .filter(event -> event.getGeoLocation().contains(location))
+                .filter(event -> {
+                    for(Location loc : event.getGeoLocation()) {
+                        if(loc.getViewLink().equals(locationLink)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
                 .collect(Collectors.toList());
     }
 
