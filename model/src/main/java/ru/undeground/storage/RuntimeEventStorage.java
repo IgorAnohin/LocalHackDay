@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import ru.undeground.Event;
 
@@ -13,31 +12,26 @@ public class RuntimeEventStorage implements EventStorage {
 
   private final int INITIAL_STORAGE_SIZE = 100;
 
-  private Map<UUID, Event> events;
+  private Map<String, Event> events;
 
   public RuntimeEventStorage() {
     this.events = new HashMap<>(INITIAL_STORAGE_SIZE);
   }
 
-  public RuntimeEventStorage(Map<UUID, Event> events) {
+  public RuntimeEventStorage(Map<String, Event> events) {
     this.events = events;
   }
 
   @Override
   public void createEvent(Event event) {
-    if (events.containsKey(event.getEventId())) {
+    if (events.containsKey(event.getEventName())) {
       return;
     }
 
     if (events.values().stream()
         .anyMatch(storageEvent -> !storageEvent.getChatId().equals(event.getChatId()))) {
-      events.put(event.getEventId(), event);
+      events.put(event.getEventName(), event);
     }
-  }
-
-  @Override
-  public Optional<Event> getEventById(UUID eventId) {
-    return Optional.ofNullable(events.get(eventId));
   }
 
   @Override
@@ -52,7 +46,7 @@ public class RuntimeEventStorage implements EventStorage {
   public List<Event> getEventsByLocation(String location) {
     return events.values()
         .stream()
-        .filter(event -> event.getGeoLocations().contains(location))
+        .filter(event -> event.getGeoLocation().contains(location))
         .collect(Collectors.toList());
   }
 
