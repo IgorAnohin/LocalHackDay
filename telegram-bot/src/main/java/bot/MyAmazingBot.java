@@ -34,7 +34,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                 String resultText = "";
                 switch (splitMessageText[0]) {
                     case "createEvent":
-                        resultText += registerEvent(chatId, splitMessageText[1]);
+                        resultText += registerEvent(chatId, splitMessageText[1], splitMessageText[2]);
                         break;
                     case "createQueue":
                         resultText += registerQueue(chatId, splitMessageText[1]);
@@ -77,11 +77,13 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         return "You was added in " + queueName + " queue";
     }
 
-    private String registerEvent(String chatId, String eventName) {
+    private String registerEvent(String chatId, String eventName, String location) {
         Event event = new Event();
 
         event.setChatId(chatId);
         event.setEventName(eventName);
+
+        event.setGeoLocation(LocationAPI.getLocations(location));
 
         manager.getEventStorage().createEvent(event);
 

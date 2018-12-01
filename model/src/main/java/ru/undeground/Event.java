@@ -2,9 +2,12 @@ package ru.undeground;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Wither;
+import ru.undeground.location.Location;
 
 @Data
 @Wither
@@ -22,19 +25,10 @@ public class Event {
   private List<String> eventUsers;
 
 
-  private String geoLocation;
+  private List<Location> geoLocation;
 
   public Event() {
     this.eventUsers = new ArrayList<>(INITIAL_USER_LIST_SIZE);
   }
 
-  public Event(String chatId, String eventName, String eventDescriptions,
-      String eventAdminId, String geoLocation) {
-    this.chatId = chatId;
-    this.eventName = eventName;
-    this.eventDescriptions = eventDescriptions;
-    this.eventAdminId = eventAdminId;
-    this.eventUsers = new ArrayList<>(INITIAL_USER_LIST_SIZE);
-    this.geoLocation = geoLocation;
-  }
 }
