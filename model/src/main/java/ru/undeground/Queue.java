@@ -1,5 +1,6 @@
 package ru.undeground;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -12,6 +13,8 @@ import lombok.experimental.Wither;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Queue {
+  private final int INITIAL_PARTICIPATING_USERS_STORAGE_SIZE = 10;
+  private final int INITIAL_APPROVING_USERS_STORAGE_SIZE = 10;
 
   @Wither
   UUID eventId;
@@ -38,6 +41,8 @@ public class Queue {
   String geoLocation;
 
   public Queue() {
-
+    this.queueId = UUID.randomUUID();
+    this.participatingUsers = new ArrayList<>(INITIAL_PARTICIPATING_USERS_STORAGE_SIZE);
+    this.approvingUsers = new ArrayList<>(INITIAL_APPROVING_USERS_STORAGE_SIZE);
   }
 }
