@@ -55,25 +55,35 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                 .getQueueStorage()
                 .getEventQueues(eventName);
 
-            if(eventQueues.isEmpty()) {
+            if (eventQueues.isEmpty()) {
               resultText += "No queues were found in the event \"" + eventName + "\"";
             } else {
               resultText += "Queues in the event \"" + eventName + "\":\n";
-              for(Queue queue: eventQueues) {
-                resultText += (queue.getQueueName() + ": " + queue.getParticipatingUsers().size() + " people inside\n");
+              for (Queue queue : eventQueues) {
+                resultText += (queue.getQueueName() + ": " + queue.getParticipatingUsers().size()
+                    + " people inside\n");
               }
               resultText += "==========";
             }
             break;
           case "findLocations":
             List<Location> locations = LocationAPI.getLocations(splitMessageText[1]);
-            resultText += locations;
+
             if (locations.isEmpty()) {
               resultText += "No locations with name \"" + splitMessageText[1] + "\" were found";
             } else {
+              resultText += "Found locations:\n";
+              for (int i = 0; i < locations.size(); ++i) {
+                Location location = locations.get(i);
+                resultText += (i + ": " + location.getName() + "\n" + location.getViewLink() + "\n"
+                    + "\n==========");
+              }
+
+              resultText += "Please choose some location by typing location index\n";
               userLocationChoice.put(chatId, locations);
             }
             break;
+
           case "getEventsByLocation":
             Location chosenLocation = userLocationChoice.get(chatId)
                 .get(Integer.parseInt(splitMessageText[1]));
