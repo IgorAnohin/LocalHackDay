@@ -39,7 +39,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                 (splitMessageText.length > 2 ? splitMessageText[2] : null));
             break;
           case "createQueue":
-            resultText += registerQueue(chatId, splitMessageText[1]);
+            resultText += registerQueue(splitMessageText[1], splitMessageText[1]);
             break;
           case "enterQueue":
             resultText += enterQueue(chatId, splitMessageText[1], splitMessageText[2]);
@@ -110,10 +110,10 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         + "\"";
   }
 
-  private String registerQueue(String chatId, String queueName) {
+  private String registerQueue(String eventName, String queueName) {
     Queue queue = new Queue();
 
-    Event event = findEvent(chatId);
+    Event event = findEvent(eventName);
 
     queue.setQueueName(queueName);
     queue.setEventName(event.getEventName());
@@ -153,10 +153,10 @@ public class MyAmazingBot extends TelegramLongPollingBot {
 
   }
 
-  private Event findEvent(String chatId) {
+  private Event findEvent(String eventName) {
     Event event = null;
     for (Event e : manager.getEventStorage().getAllEvents()) {
-      if (chatId.equals(e.getChatId())) {
+      if (eventName.equals(e.getEventName())) {
         event = e;
         break;
       }
