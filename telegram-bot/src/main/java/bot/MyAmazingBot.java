@@ -14,6 +14,7 @@ import ru.undeground.storage.RuntimeStorageManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MyAmazingBot extends TelegramLongPollingBot {
     private RuntimeStorageManager manager = new RuntimeStorageManager();
@@ -43,7 +44,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                         resultText += enterQueue(chatId, splitMessageText[1], splitMessageText[2]);
                         break;
                     case "getEvents":
-                        resultText += manager.getEventStorage().getAllEvents();
+                        resultText += manager.getEventStorage().getAllEvents().stream().map(event -> event.getEventName() + "\n").collect(Collectors.joining());
                         break;
                     case "getQueues":
                         resultText += manager.getQueueStorage().getEventQueues(splitMessageText[1]);
@@ -51,10 +52,17 @@ public class MyAmazingBot extends TelegramLongPollingBot {
                     case "findLocations":
                         List<Location> locations = LocationAPI.getLocations(splitMessageText[1]);
                         resultText += locations;
-                        userLocationChoice.put(chatId, locations);
+                        if(locations.isEmpty()){
+                            resultText+="No locations were found";
+                        } else {
+                            userLocationChoice.put(chatId, locations);
+                        }
                         break;
                     case "getEventsByLocation":
-                        resultText += manager.getEventStorage().getEventsByLocation(userLocationChoice.get(chatId).get(Integer.parseInt(splitMessageText[1])).getViewLink());
+                        resultText += manager.getEventStorage().getEventsByLocation(userLocationChoice.get(chatId).get(Integer.parseInt(splitMessageText[1])).getViewLink()).stream().map(event -> event.getEventName() + "\n").collect(Collectors.joining());
+                        if(resultText.isEmpty()){
+                            resultText+="No events were found";
+                        }
                         break;
 
                 }
