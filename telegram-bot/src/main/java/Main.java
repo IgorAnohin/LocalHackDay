@@ -18,6 +18,6 @@ public class Main {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        System.out.println("Ура");
+        System.out.println("It's work");
     }
 }

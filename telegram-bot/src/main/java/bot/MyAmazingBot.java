@@ -9,22 +9,48 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class MyAmazingBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
-
-        // We check if the update has a message and the message has text
         if (update.hasMessage() && update.getMessage().hasText()) {
-            // Set variables
-            String message_text = update.getMessage().getText();
-            long chat_id = update.getMessage().getChatId();
+            String messageTextWithSlash = update.getMessage().getText();
+            if (messageTextWithSlash.charAt(0) == '/') {
+                SendMessage message = new SendMessage().setChatId(update.getMessage().getChatId());
 
-            SendMessage message = new SendMessage() // Create a message object object
-                    .setChatId(chat_id)
-                    .setText(message_text);
-            try {
-                execute(message); // Sending our message object to user
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+                String messagesText = messageTextWithSlash.substring(1);
+                String resultText = "";
+                switch (messagesText.split(" ")[0]) {
+                    case "help":
+                        resultText += "To register an event: \\registerEvent [name event] [description event]\n" +
+                                "Choose queue [name]\n";
+                        break;
+                    case "createEvent":
+                        resultText += registerEvent(messagesText.split(" ")[1], messagesText.split(" ")[2]);
+                        break;
+                    case "createQueue":
+                        resultText += registerQueue(messagesText.split(" ")[1], messagesText.split(" ")[2]);
+                        break;
+                    case "text":
+                        resultText += update.getMessage().getGroupchatCreated();
+                        break;
+
+                }
+
+                message.setText(resultText);
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
             }
         }
+    }
+
+    private String registerEvent(String nameEvent, String descriptionEvent) {
+        //todo
+        return "newEvent";
+    }
+
+    private String registerQueue(String s, String s1) {
+        //todo
+        return "newQueue";
     }
 
     @Override
