@@ -12,35 +12,6 @@ import ru.undeground.storage.RuntimeStorageManager;
 public class MyAmazingBot extends TelegramLongPollingBot {
     private RuntimeStorageManager manager = new RuntimeStorageManager();
 
-    {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(10_000);
-                        System.out.println("Такт");
-                        if (queue != null) {
-                            for (int i = 0; i < queue.getParticipatingUsers().size(); i++) {
-                                System.out.println("send - " + queue.getParticipatingUsers().get(i));
-                                SendMessage message = new SendMessage().setChatId(Long.valueOf(queue.getParticipatingUsers().get(i)));
-                                message.setText("Time = " + 10 * i);
-                                execute(message);
-                            }
-                            if (queue.getParticipatingUsers().size() > 0)
-                                queue.getParticipatingUsers().remove(0);
-                        }
-
-                    } catch (InterruptedException | TelegramApiException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        thread.start();
-    }
-
-
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -103,7 +74,35 @@ public class MyAmazingBot extends TelegramLongPollingBot {
 
         manager.getQueueStorage().createQueue(queue);
 
+        createThread(event.getEventName(), queueName);
+
         return "Queue " + queueName + " was create";
+    }
+
+    private void createThread(String eventName, String queueName) {
+        Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(10_000);
+                    Queue queue = findQueue(eventName, queueName);
+                    if (queue != null) {
+                        for (int i = 0; i < queue.getParticipatingUsers().size(); i++) {
+                            String chatIdUser = queue.getParticipatingUsers().get(i);
+                            SendMessage message = new SendMessage().setChatId(chatIdUser);
+                            message.setText("Time = " + 10 * i);
+                            execute(message);
+                        }
+                        if (queue.getParticipatingUsers().size() > 0)
+                            queue.getParticipatingUsers().remove(0);
+                    }
+
+                } catch (InterruptedException | TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+
     }
 
     private Event findEvent(String chatId) {
