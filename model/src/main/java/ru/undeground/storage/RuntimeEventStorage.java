@@ -28,10 +28,8 @@ public class RuntimeEventStorage implements EventStorage {
       return;
     }
 
-    if (events.values().stream()
-        .anyMatch(storageEvent -> !storageEvent.getChatId().equals(event.getChatId()))) {
       events.put(event.getEventId(), event);
-    }
+
   }
 
   @Override

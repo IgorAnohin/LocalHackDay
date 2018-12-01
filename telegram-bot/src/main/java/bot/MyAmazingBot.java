@@ -8,40 +8,73 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.undeground.Event;
 import ru.undeground.Queue;
-import ru.undeground.storage.RuntimeEventStorage;
+import ru.undeground.storage.RuntimeStorageManager;
 
 public class MyAmazingBot extends TelegramLongPollingBot {
-    private RuntimeEventStorage eventStorage = new RuntimeEventStorage();
+    private Event event;
+    private RuntimeStorageManager manager = new RuntimeStorageManager();
+    private Queue queue;
+
+    {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(10_000);
+                        System.out.println("Такт");
+                        if (queue != null) {
+                            for (int i = 0; i < queue.getParticipatingUsers().size(); i++) {
+                                System.out.println("send - " + queue.getParticipatingUsers().get(i));
+                                SendMessage message = new SendMessage().setChatId(Long.valueOf(queue.getParticipatingUsers().get(i)));
+                                message.setText("Time = " + 10 * i);
+                                execute(message);
+                            }
+                            if (queue.getParticipatingUsers().size() > 0)
+                                queue.getParticipatingUsers().remove(0);
+                        }
+
+                    } catch (InterruptedException | TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        thread.start();
+    }
+
 
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageTextWithSlash = update.getMessage().getText();
+
+            String chatID = update.getMessage().getChatId().toString();
             if (messageTextWithSlash.charAt(0) == '/') {
-                SendMessage message = new SendMessage().setChatId(update.getMessage().getChatId());
+                SendMessage outMessage = new SendMessage().setChatId(update.getMessage().getChatId());
 
                 String messagesText = messageTextWithSlash.substring(1);
+                String[] splitMessageText = messagesText.split(" ");
+
                 String resultText = "";
-                switch (messagesText.split(" ")[0]) {
-                    case "help":
-                        resultText += "To register an event: \\registerEvent [name event] [description event]\n" +
-                                "Choose queue [name]\n";
-                        break;
+                switch (splitMessageText[0]) {
                     case "createEvent":
-                        resultText += registerEvent(update.getMessage());
+                        resultText += registerEvent(chatID, splitMessageText[1]);
                         break;
                     case "createQueue":
-                        resultText += registerQueue(message);
+                        resultText += registerQueue(outMessage);
                         break;
-                    case "text":
-                        resultText += update.getMessage().getGroupchatCreated();
+                    case "enterQueue":
+                        resultText += enterQueue(update.getMessage().getChatId().toString());
                         break;
-
+                    case "enterEvent":
+                        resultText += "You enter in HackDay event";
+                        break;
                 }
 
-                message.setText(resultText);
+                outMessage.setText(resultText);
                 try {
-                    execute(message);
+                    execute(outMessage);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
@@ -49,38 +82,39 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         }
     }
 
-    private String registerEvent(Message message) {
+    private String enterQueue(String chatIdUser) {
+        queue.getParticipatingUsers().add(chatIdUser);
+        System.out.println(chatIdUser);
+        return "You was added in Coffee queue";
+    }
+
+    private String registerEvent(String chatId, String eventName) {
         Event event = new Event();
 
-        for (Event e : eventStorage.getAllEvents()) {
-            if(e.getChatId().equals(message.getChatId().toString())){
-                return "You have already created an event";
-            }
-        }
+        event.setChatId(chatId);
+        event.setEventName(eventName);
 
-        event.setChatId(message.getChatId().toString());
-        event.setEventName(message.getText().substring(1).split(" ")[1]);
-        event.setEventDescriptions(message.getText().substring(1).split(" ")[2]);
+        manager.getEventStorage().createEvent(event);
 
-        eventStorage.createEvent(event);
-        return "newEvent : " + event.getEventId();
+        return "Added event " + event.getEventName();
     }
 
     private String registerQueue(SendMessage message) {
         Queue queue = new Queue();
 
         Event event = null;
-        for (Event e : eventStorage.getAllEvents()) {
+        for (Event e : manager.getEventStorage().getAllEvents()) {
             if (message.getChatId().equals(e.getChatId())) {
                 event = e;
                 break;
             }
         }
 
-        queue.setEventId(event.getEventId());
-        queue.setQueueName(message.getText().substring(1).split(" ")[1]);
+        queue.setQueueName("Coffee");
 
-        return "newQueue";
+        this.queue = queue;
+
+        return "Queue coffee was create";
     }
 
     @Override
