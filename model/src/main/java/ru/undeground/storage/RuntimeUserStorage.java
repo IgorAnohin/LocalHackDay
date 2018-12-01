@@ -1,5 +1,7 @@
 package ru.undeground.storage;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -8,10 +10,22 @@ import ru.undeground.User;
 
 public class RuntimeUserStorage implements UserStorage {
 
+  private final int INITIAL_ADMIN_STORAGE_SIZE = 10;
   private final int INITIAL_USER_STORAGE_SIZE = 100;
 
   private Set<String> admins;
   private Map<String, User> users;
+
+  public RuntimeUserStorage(Set<String> admins,
+      Map<String, User> users) {
+    this.admins = admins;
+    this.users = users;
+  }
+
+  public RuntimeUserStorage() {
+    this.admins = new HashSet<>(INITIAL_ADMIN_STORAGE_SIZE);
+    this.users = new HashMap<>(INITIAL_USER_STORAGE_SIZE);
+  }
 
   @Override
   public boolean createUser(User user) {
