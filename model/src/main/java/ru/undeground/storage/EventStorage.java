@@ -1,13 +1,13 @@
 package ru.undeground.storage;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import ru.undeground.Event;
 
 public interface EventStorage {
   void createEvent(Event event);
 
-  Event getEventById(UUID eventId);
+  Optional<Event> getEventByName(String eventName);
 
   List<Event> getEventsByLocation(String location);
 

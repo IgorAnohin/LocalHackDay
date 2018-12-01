@@ -1,4 +1,4 @@
-package ru.undeground;
+package ru.undeground.location;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
