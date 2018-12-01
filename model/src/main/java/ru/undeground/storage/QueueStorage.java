@@ -10,7 +10,7 @@ public interface QueueStorage {
 
   boolean closeQueue(UUID queueId);
 
-  List<Queue> getEventQueues(UUID eventId);
+  List<Queue> getEventQueues(String eventName);
 
   QueueAddStatus addUserToQueue(UUID queueId, String userId);
 

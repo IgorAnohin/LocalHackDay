@@ -17,7 +17,7 @@ public class Queue {
   private final int INITIAL_APPROVING_USERS_STORAGE_SIZE = 10;
 
   @Wither
-  UUID eventId;
+  String eventName;
   @Wither
   UUID queueId;
 
