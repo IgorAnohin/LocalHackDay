@@ -53,10 +53,10 @@ public class RuntimeQueueStorage implements QueueStorage {
   }
 
   @Override
-  public List<Queue> getEventQueues(UUID eventId) {
+  public List<Queue> getEventQueues(String eventName) {
     return queues.values()
         .stream()
-        .filter(queue -> queue.getEventId().equals(eventId))
+        .filter(queue -> queue.getEventName().equals(eventName))
         .collect(Collectors.toList());
   }
 
